@@ -12,7 +12,7 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         private double _interval = 20;
-        public Element[,] Matrix = new Element[0, 0];
+        public Element[,] _matrix = new Element[0, 0];
 
         public MainWindow()
         {
@@ -36,11 +36,13 @@ namespace WpfApp1
 
             Point furthestCenter = new(50, 50);
             int numberOfElements = int.Parse(carbonBox.Text);
-            Matrix = new Element[numberOfElements, numberOfElements];
-
+            _matrix = new Element[numberOfElements, numberOfElements];
+            int centerRow = _matrix.Length / 2;
             for (int i = 0; i < numberOfElements; i++)
             {
-                FormattedText text = TextFormater.FormatText("CH4", TextStyle.Element, this);
+                Element element = new Carbon();
+                element.AvalableValency -= i;
+                FormattedText text = TextFormater.FormatText(element.GetName(), TextStyle.Element, this);
                 double yCenter = text.Height / 2;
                 Point textPoint = new(furthestCenter.X, furthestCenter.Y - yCenter);
 
@@ -53,6 +55,8 @@ namespace WpfApp1
                     drawingContext.DrawLine(new Pen(Brushes.Black, 1), startPoint, endPoint);
                     furthestCenter = endPoint;
                 }
+
+                //_matrix[centerRow, i] = element;
             }
 
             // Close the DrawingContext to persist changes to the DrawingVisual.

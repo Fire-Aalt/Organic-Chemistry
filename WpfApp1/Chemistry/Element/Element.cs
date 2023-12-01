@@ -7,17 +7,31 @@ using System.Threading.Tasks;
 
 namespace WpfApp1.Chemistry.Element
 {
-    public class Element
+    public abstract class Element
     {
-        public string Symbol { get; set; }
-        public uint Valency { get; set; }
+        public abstract string Symbol { get; }
+        public abstract int Valency { get; }
 
-        //public Point[] Connections { get; set; }
+        public int AvalableValency;
 
-        public Element(string symbol, uint valency)
+        public Element()
         {
-            Symbol = symbol;
-            Valency = valency;
+            AvalableValency = Valency;
+        }
+
+        public virtual string GetName()
+        {
+            return Symbol;
+        }
+
+        public bool ConnectTo(Element element)
+        {
+            if (AvalableValency - element.Valency >= 0)
+            {
+                AvalableValency -= element.Valency;
+                return true;
+            }
+            return false;
         }
     }
 }
