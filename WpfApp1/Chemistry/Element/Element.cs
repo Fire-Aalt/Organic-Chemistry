@@ -14,9 +14,12 @@ namespace WpfApp1.Chemistry.Element
 
         public int AvalableValency;
 
+        public Dictionary<Element, int> Connections { get; set; }
+
         public Element()
         {
             AvalableValency = Valency;
+            Connections = new Dictionary<Element, int>();
         }
 
         public virtual string GetName()
@@ -24,11 +27,16 @@ namespace WpfApp1.Chemistry.Element
             return Symbol;
         }
 
-        public bool ConnectTo(Element element)
+        public bool ConnectTo(Element? element, int strength)
         {
-            if (AvalableValency - element.Valency >= 0)
+            if (element == null) return false;
+
+            if (AvalableValency - strength >= 0 && element.AvalableValency - strength >= 0 && !Connections.ContainsKey(element))
             {
-                AvalableValency -= element.Valency;
+                AvalableValency -= strength;
+                Connections.Add(element, strength);
+                element.AvalableValency -= strength;
+                element.Connections.Add(element, strength);
                 return true;
             }
             return false;

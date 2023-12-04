@@ -27,27 +27,35 @@ namespace WpfApp1
         // Create a DrawingVisual that contains text.
         public DrawingVisual CreateDrawingVisualText()
         {
-            // Create an instance of a DrawingVisual.
             DrawingVisual drawingVisual = new DrawingVisual();
-
-            // Retrieve the DrawingContext from the DrawingVisual.
             DrawingContext drawingContext = drawingVisual.RenderOpen();
 
-
-            Point furthestCenter = new(50, 50);
+            // Fill the matrix
             int numberOfElements = int.Parse(carbonBox.Text);
             _matrix = new Element[numberOfElements, numberOfElements];
-            int centerRow = _matrix.Length / 2;
+            int centerRow = _matrix.GetLength(0) / 2;
             for (int i = 0; i < numberOfElements; i++)
             {
                 Element element = new Carbon();
-                element.AvalableValency -= i;
+
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow + 1, i), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow - 1, i), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow, i + 1), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow, i - 1), 1);
+
+                _matrix[centerRow, i] = element;
+            }
+
+            // Draw the matrix
+            Point furthestCenter = new(100, 50);
+            for (int i = 0; i < numberOfElements; i++)
+            {
+                Element element = _matrix[centerRow, i];
                 FormattedText text = TextFormater.FormatText(element.GetName(), TextStyle.Element, this);
                 double yCenter = text.Height / 2;
                 Point textPoint = new(furthestCenter.X, furthestCenter.Y - yCenter);
 
                 drawingContext.DrawText(text, textPoint);
-
                 if (i != numberOfElements - 1)
                 {
                     Point startPoint = new(furthestCenter.X + text.Width, furthestCenter.Y);
@@ -55,8 +63,6 @@ namespace WpfApp1
                     drawingContext.DrawLine(new Pen(Brushes.Black, 1), startPoint, endPoint);
                     furthestCenter = endPoint;
                 }
-
-                //_matrix[centerRow, i] = element;
             }
 
             // Close the DrawingContext to persist changes to the DrawingVisual.
