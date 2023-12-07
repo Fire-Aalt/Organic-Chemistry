@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using WpfApp1.Utility;
 
 namespace WpfApp1.Chemistry.Element
 {
@@ -27,6 +29,11 @@ namespace WpfApp1.Chemistry.Element
             return Symbol;
         }
 
+        public FormattedText GetFormattedName(Visual visual)
+        {
+            return TextFormater.FormatText(GetName(), TextStyle.Element, visual);
+        }
+
         public bool ConnectTo(Element? element, int strength)
         {
             if (element == null) return false;
@@ -35,8 +42,9 @@ namespace WpfApp1.Chemistry.Element
             {
                 AvalableValency -= strength;
                 Connections.Add(element, strength);
+
                 element.AvalableValency -= strength;
-                element.Connections.Add(element, strength);
+                element.Connections.Add(this, strength);
                 return true;
             }
             return false;

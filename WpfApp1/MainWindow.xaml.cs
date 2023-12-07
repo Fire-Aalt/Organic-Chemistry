@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using WpfApp1.Chemistry.Element;
@@ -11,7 +12,6 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private double _interval = 20;
         public Element[,] _matrix = new Element[0, 0];
 
         public MainWindow()
@@ -33,39 +33,28 @@ namespace WpfApp1
             // Fill the matrix
             int numberOfElements = int.Parse(carbonBox.Text);
             _matrix = new Element[numberOfElements, numberOfElements];
-            int centerRow = _matrix.GetLength(0) / 2;
+            numberOfElements *= 3;
+            var rng = new Random();
             for (int i = 0; i < numberOfElements; i++)
             {
                 Element element = new Carbon();
 
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow + 1, i), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow - 1, i), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow, i + 1), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, centerRow, i - 1), 1);
+                int x = rng.Next(0, _matrix.GetLength(0));
+                int y = rng.Next(0, _matrix.GetLength(1));
 
-                _matrix[centerRow, i] = element;
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y + 1), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y - 1), 1);
+
+                _matrix[x, y] = element;
             }
 
             // Draw the matrix
-            Point furthestCenter = new(100, 50);
-            for (int i = 0; i < numberOfElements; i++)
-            {
-                Element element = _matrix[centerRow, i];
-                FormattedText text = TextFormater.FormatText(element.GetName(), TextStyle.Element, this);
-                double yCenter = text.Height / 2;
-                Point textPoint = new(furthestCenter.X, furthestCenter.Y - yCenter);
+            Point startingPoint = new(100, 50);
+            var matrixDrawer = new MatrixDrawer(_matrix, drawingContext, this);
 
-                drawingContext.DrawText(text, textPoint);
-                if (i != numberOfElements - 1)
-                {
-                    Point startPoint = new(furthestCenter.X + text.Width, furthestCenter.Y);
-                    Point endPoint = new(furthestCenter.X + text.Width + _interval, furthestCenter.Y);
-                    drawingContext.DrawLine(new Pen(Brushes.Black, 1), startPoint, endPoint);
-                    furthestCenter = endPoint;
-                }
-            }
-
-            // Close the DrawingContext to persist changes to the DrawingVisual.
+            matrixDrawer.DrawMatrix(startingPoint, 50);
             drawingContext.Close();
 
             return drawingVisual;

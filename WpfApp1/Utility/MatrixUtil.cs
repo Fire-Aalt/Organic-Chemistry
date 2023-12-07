@@ -9,12 +9,26 @@ namespace WpfApp1.Utility
 {
     public static class MatrixUtil
     {
-        public static Element? TryGet(ref Element[,] matrix, int i, int j)
+        public static int[,] Corners = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+
+        public static Element? TryGet(ref Element[,] matrix, int x, int y)
         {
-            if ((i > -1 && i < matrix.GetLength(0)) && (j > -1 && j < matrix.GetLength(1)))
+            if ((x > -1 && x < matrix.GetLength(0)) && (y > -1 && y < matrix.GetLength(1)))
             {
-                return matrix[i, j];
+                return matrix[x, y];
             }
+            return null;
+        }
+
+        public static Tuple<int, int>? TryGetElementPos(ref Element[,] matrix, int x, int y, Element element)
+        {
+            for (int i = 0; i < Corners.GetLength(0); i++)
+            {
+                Element? found = TryGet(ref matrix, x + Corners[i, 0], y + Corners[i, 1]);
+                if (element == found)
+                    return new Tuple<int, int>(x + Corners[i, 0], y + Corners[i, 1]);
+            }
+
             return null;
         }
     }

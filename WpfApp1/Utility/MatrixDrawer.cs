@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media;
+using WpfApp1.Chemistry.Element;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace WpfApp1.Utility
+{
+    public class MatrixDrawer
+    {
+        public Element[,] matrix;
+        public DrawingContext drawingContext;
+        public Visual visual;
+
+        public Point startingPoint;
+        public int spacing;
+
+        public List<Tuple<Element, Element>> DrawnConnections = new();
+
+        public MatrixDrawer(Element[,] matrix, DrawingContext drawingContext, Visual visual) 
+        {
+            this.matrix = matrix;
+            this.drawingContext = drawingContext;
+            this.visual = visual;
+        }
+
+        public void DrawMatrix(Point startingPoint, int spacing)
+        {
+            this.startingPoint = startingPoint;
+            this.spacing = spacing;
+            for (int x = 0; x < matrix.GetLength(0); x++)
+            {
+                for (int y = 0; y < matrix.GetLength(1); y++)
+                {
+                    DrawElement(x, y);
+                }
+            }
+        }
+
+        private void DrawElement(int x, int y)
+        {
+            Element element = matrix[x, y];
+            if (element == null) return;
+
+            // Draw Element
+            var formattedText = element.GetFormattedName(visual);
+            Point textPoint = new(startingPoint.X + x * spacing - formattedText.Width / 2, startingPoint.Y + y * spacing - formattedText.Height / 2);
+
+            drawingContext.DrawText(formattedText, textPoint);
+
+            // Draw Connections
+            foreach (var connection in element.Connections)
+            {
+                Tuple<Element, Element> link = new(element, connection.Key);
+                Tuple<Element, Element> swappedLink = new(connection.Key, element);
+
+                bool exists = false;
+                for (int i = 0; i < DrawnConnections.Count; i++)
+                {
+                    if (DrawnConnections[i] == link || DrawnConnections[i] == swappedLink)
+                    {
+                        exists = true; 
+                        break;
+                    }
+                }
+                if (exists) continue;
+
+                var pos = MatrixUtil.TryGetElementPos(ref matrix, x, y, connection.Key);
+                if (pos != null)
+                {
+                    DrawConnection(x, y, pos.Item1, pos.Item2, connection.Value);
+                    DrawnConnections.Add(link);
+                }
+            }
+        }
+
+        private void DrawConnection(int x1, int y1, int x2, int y2, int strength)
+        {
+            var formattedText1 = matrix[x1, y1].GetFormattedName(visual);
+            var formattedText2 = matrix[x2, y2].GetFormattedName(visual);
+
+            Point textOffset1;
+            Point textOffset2;
+            if (x1 > x2)
+            {
+                textOffset1 = new(0, formattedText1.Height / 2);
+                textOffset2 = new(formattedText2.Width, formattedText2.Height / 2);
+            }
+            else if (x1 < x2)
+            {
+                textOffset1 = new(formattedText2.Width, formattedText1.Height / 2);
+                textOffset2 = new(0, formattedText2.Height / 2);
+            }
+            else if (y1 < y2)
+            {
+                textOffset1 = new(formattedText2.Width / 2, formattedText1.Height);
+                textOffset2 = new(formattedText2.Width / 2, 0);
+            }
+            else
+            {
+                textOffset1 = new(formattedText2.Width / 2, 0);
+                textOffset2 = new(formattedText2.Width / 2, formattedText2.Height);
+            }
+
+            Point point1 = new(textOffset1.X + startingPoint.X + x1 * spacing - formattedText1.Width / 2, textOffset1.Y + startingPoint.Y + y1 * spacing - formattedText1.Height / 2);
+            Point point2 = new(textOffset2.X + startingPoint.X + x2 * spacing - formattedText2.Width / 2, textOffset2.Y + startingPoint.Y + y2 * spacing - formattedText2.Height / 2);
+
+            drawingContext.DrawLine(new Pen(Brushes.Black, 1), point1, point2);
+        }
+    }
+}
