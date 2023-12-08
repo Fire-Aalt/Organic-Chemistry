@@ -34,15 +34,16 @@ namespace WpfApp1
             {
                 int x = rng.Next(0, _matrix.GetLength(0));
                 int y = rng.Next(0, _matrix.GetLength(1));
+                int strength = rng.Next(1, 4);
 
                 if (_matrix[x, y] != null) continue;
                 Element element = new Carbon();
 
 
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y + 1), 1);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y - 1), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), strength);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), strength);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y + 1), strength);
+                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y - 1), strength);
 
                 _matrix[x, y] = element;
             }

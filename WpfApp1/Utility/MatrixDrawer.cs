@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +14,9 @@ namespace WpfApp1.Utility
         public Canvas canvas;
 
         public Point startingPoint;
-        public int spacing;
+        public int elementSpacing;
+        public int connectionSpacing = 5;
+        public double connectionPadding = 1.5;
 
         public List<Tuple<Element, Element>> DrawnConnections = new();
 
@@ -28,7 +29,7 @@ namespace WpfApp1.Utility
         public async Task DrawMatrix(Point startingPoint, int spacing)
         {
             this.startingPoint = startingPoint;
-            this.spacing = spacing;
+            this.elementSpacing = spacing;
             for (int x = 0; x < matrix.GetLength(0); x++)
             {
                 for (int y = 0; y < matrix.GetLength(1); y++)
@@ -39,8 +40,8 @@ namespace WpfApp1.Utility
                     using DrawingContext drawingContext = visual.RenderOpen();
                     DrawElement(drawingContext, x, y);
 
-                    canvas.Children.Add(new VisualHost { Visual = visual });
                     await Task.Delay(100);
+                    canvas.Children.Add(new VisualHost { Visual = visual });
                 }
             }
         }
@@ -52,7 +53,7 @@ namespace WpfApp1.Utility
 
             // Draw Element
             var formattedText = element.GetFormattedName(canvas);
-            Point textPoint = new(startingPoint.X + x * spacing - formattedText.Width / 2, startingPoint.Y + y * spacing - formattedText.Height / 2);
+            Point textPoint = new(startingPoint.X + x * elementSpacing - formattedText.Width / 2, startingPoint.Y + y * elementSpacing - formattedText.Height / 2);
 
             drawingContext.DrawText(formattedText, textPoint);
 
@@ -89,34 +90,71 @@ namespace WpfApp1.Utility
             var formattedText1 = matrix[x1, y1].GetFormattedName(canvas);
             var formattedText2 = matrix[x2, y2].GetFormattedName(canvas);
 
-            Point textOffset1;
-            Point textOffset2;
-            if (x1 > x2)
+            Tuple<Point, Point> textOffsets;
+            if (x1 < x2)
             {
-                textOffset1 = new(0, formattedText1.Height / 2);
-                textOffset2 = new(formattedText2.Width, formattedText2.Height / 2);
-            }
-            else if (x1 < x2)
-            {
-                textOffset1 = new(formattedText1.Width, formattedText1.Height / 2);
-                textOffset2 = new(0, formattedText2.Height / 2);
+                textOffsets = new Tuple<Point, Point>(
+                    new(formattedText1.Width + connectionPadding, formattedText1.Height / 2),
+                    new(-connectionPadding, formattedText2.Height / 2));
             }
             else if (y1 < y2)
             {
-                textOffset1 = new(formattedText1.Width / 2, formattedText1.Height);
-                textOffset2 = new(formattedText2.Width / 2, 0);
+                textOffsets = new Tuple<Point, Point>(
+                    new(formattedText1.Width / 2, formattedText1.Height),
+                    new(formattedText2.Width / 2, 0));
             }
             else
+                return drawingContext;
+
+            var centerPoints = new Tuple<Point, Point>(
+                GetCenterPoint(textOffsets.Item1, x1, y1, formattedText1),
+                GetCenterPoint(textOffsets.Item2, x2, y2, formattedText2));
+
+            bool even = strength % 2 == 0;
+            for (int i = -strength / 2; i <= strength / 2; i++)
             {
-                textOffset1 = new(formattedText1.Width / 2, 0);
-                textOffset2 = new(formattedText2.Width / 2, formattedText2.Height);
+                if (i == 0 && even) continue;
+
+                var points = GetAdjustedPoints(centerPoints, textOffsets, i, even);
+                drawingContext.DrawLine(new Pen(Brushes.Black, 1), points.Item1, points.Item2);
             }
 
-            Point point1 = new(textOffset1.X + startingPoint.X + x1 * spacing - formattedText1.Width / 2, textOffset1.Y + startingPoint.Y + y1 * spacing - formattedText1.Height / 2);
-            Point point2 = new(textOffset2.X + startingPoint.X + x2 * spacing - formattedText2.Width / 2, textOffset2.Y + startingPoint.Y + y2 * spacing - formattedText2.Height / 2);
-
-            drawingContext.DrawLine(new Pen(Brushes.Black, 1), point1, point2);
             return drawingContext;
+        }
+
+        private Point GetCenterPoint(Point textOffset, int x, int y, FormattedText formattedText)
+        {
+            return new Point(
+                startingPoint.X + textOffset.X + x * elementSpacing - formattedText.Width / 2,
+                startingPoint.Y + textOffset.Y + y * elementSpacing - formattedText.Height / 2
+            );
+        }
+
+        private Tuple<Point, Point> GetAdjustedPoints(Tuple<Point, Point> centerPoints, Tuple<Point, Point> textOffsets, int i, bool even)
+        {
+            Point point1 = centerPoints.Item1, point2 = centerPoints.Item2;
+            if (textOffsets.Item2.X == 0 || Math.Abs(textOffsets.Item2.X) == connectionPadding)
+            {
+                point1.Y += connectionSpacing * i;
+                point2.Y += connectionSpacing * i;
+                if (even)
+                {
+                    point1.Y -= connectionSpacing / 2 * Math.Sign(i);
+                    point2.Y -= connectionSpacing / 2 * Math.Sign(i);
+                }
+            }
+            else if (textOffsets.Item2.Y == 0 || Math.Abs(textOffsets.Item2.Y) == connectionPadding)
+            {
+                point1.X += connectionSpacing * i;
+                point2.X += connectionSpacing * i;
+                if (even)
+                {
+                    point1.X -= connectionSpacing / 2 * Math.Sign(i);
+                    point2.X -= connectionSpacing / 2 * Math.Sign(i);
+                }
+            }
+
+            return new Tuple<Point, Point>(point1, point2);
         }
     }
 }
