@@ -13,6 +13,8 @@ namespace WpfApp1.Chemistry.Element
         {
             if (AvalableValency > 1)
                 return Symbol + "H" + AvalableValency;
+            else if (AvalableValency == 1)
+                return Symbol + "H";
             return Symbol;
         }
     }

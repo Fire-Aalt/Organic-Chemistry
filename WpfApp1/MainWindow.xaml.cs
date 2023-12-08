@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using WpfApp1.Chemistry.Element;
 using WpfApp1.Utility;
 
@@ -19,17 +18,13 @@ namespace WpfApp1
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            canvas.Children.Add(new VisualHost { Visual = CreateDrawingVisualText() });
+            await CreateMatrix();
         }
 
-        // Create a DrawingVisual that contains text.
-        public DrawingVisual CreateDrawingVisualText()
+        public async Task CreateMatrix()
         {
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-
             // Fill the matrix
             int numberOfElements = int.Parse(carbonBox.Text);
             _matrix = new Element[numberOfElements, numberOfElements];
@@ -37,10 +32,12 @@ namespace WpfApp1
             var rng = new Random();
             for (int i = 0; i < numberOfElements; i++)
             {
-                Element element = new Carbon();
-
                 int x = rng.Next(0, _matrix.GetLength(0));
                 int y = rng.Next(0, _matrix.GetLength(1));
+
+                if (_matrix[x, y] != null) continue;
+                Element element = new Carbon();
+
 
                 element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), 1);
                 element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), 1);
@@ -50,14 +47,16 @@ namespace WpfApp1
                 _matrix[x, y] = element;
             }
 
+            await DrawMatrix();
+        }
+
+        public async Task DrawMatrix()
+        {
             // Draw the matrix
             Point startingPoint = new(100, 50);
-            var matrixDrawer = new MatrixDrawer(_matrix, drawingContext, this);
+            var matrixDrawer = new MatrixDrawer(_matrix, canvas);
 
-            matrixDrawer.DrawMatrix(startingPoint, 50);
-            drawingContext.Close();
-
-            return drawingVisual;
+            await matrixDrawer.DrawMatrix(startingPoint, 50);
         }
 
         private void ButtonClear_Click(object sender, RoutedEventArgs e)
