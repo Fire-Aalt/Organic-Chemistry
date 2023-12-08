@@ -12,22 +12,27 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         public Element[,] _matrix = new Element[0, 0];
+        public MatrixDrawer? matrixDrawer = null;
+
+        public Point startingPoint = new(100, 50);
+        public int spacing = 50;
+        public int drawDelay = 1;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            await CreateMatrix();
-        }
-
+        // Fill the matrix
         public async Task CreateMatrix()
         {
-            // Fill the matrix
             int numberOfElements = int.Parse(carbonBox.Text);
             _matrix = new Element[numberOfElements, numberOfElements];
+
+            int mainRow = _matrix.GetLength(0) / 2;
+            if (_matrix.GetLength(0) % 2 == 0)
+                mainRow--;
+
             numberOfElements *= 3;
             var rng = new Random();
             for (int i = 0; i < numberOfElements; i++)
@@ -39,9 +44,12 @@ namespace WpfApp1
                 if (_matrix[x, y] != null) continue;
                 Element element = new Carbon();
 
+                if (y == mainRow || (checkBox.IsChecked ?? false))
+                {
+                    element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), strength);
+                    element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), strength);
+                }
 
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), strength);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), strength);
                 element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y + 1), strength);
                 element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y - 1), strength);
 
@@ -51,18 +59,27 @@ namespace WpfApp1
             await DrawMatrix();
         }
 
+        // Draw the matrix
         public async Task DrawMatrix()
         {
-            // Draw the matrix
-            Point startingPoint = new(100, 50);
-            var matrixDrawer = new MatrixDrawer(_matrix, canvas);
+            matrixDrawer = new MatrixDrawer(_matrix, canvas);
 
-            await matrixDrawer.DrawMatrix(startingPoint, 50);
+            await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay);
         }
 
-        private void ButtonClear_Click(object sender, RoutedEventArgs e)
+        public async Task ClearCanvas()
         {
+            drawDelay = int.Parse(drawDelayBox.Text);
+            matrixDrawer?.cts?.Cancel();
+
+            await Task.Delay(drawDelay);
             canvas.Children.Clear();
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            await ClearCanvas();
+            await CreateMatrix();
         }
     }
 }

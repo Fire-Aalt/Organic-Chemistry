@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,21 +16,27 @@ namespace WpfApp1.Utility
 
         public Point startingPoint;
         public int elementSpacing;
+        public int mainRow;
+
         public int connectionSpacing = 5;
         public double connectionPadding = 1.5;
+
+        public CancellationTokenSource cts;
 
         public List<Tuple<Element, Element>> DrawnConnections = new();
 
         public MatrixDrawer(Element[,] matrix, Canvas canvas) 
         {
+            cts = new CancellationTokenSource();
             this.matrix = matrix;
             this.canvas = canvas;
         }
 
-        public async Task DrawMatrix(Point startingPoint, int spacing)
+        public async Task DrawMatrix(Point startingPoint, int spacing, int drawDelay)
         {
             this.startingPoint = startingPoint;
             this.elementSpacing = spacing;
+
             for (int x = 0; x < matrix.GetLength(0); x++)
             {
                 for (int y = 0; y < matrix.GetLength(1); y++)
@@ -40,7 +47,15 @@ namespace WpfApp1.Utility
                     using DrawingContext drawingContext = visual.RenderOpen();
                     DrawElement(drawingContext, x, y);
 
-                    await Task.Delay(100);
+                    try
+                    {
+                        await Task.Delay(drawDelay, cts.Token);
+                    }
+                    catch (Exception _)
+                    {
+                        return;
+                    }
+
                     canvas.Children.Add(new VisualHost { Visual = visual });
                 }
             }
@@ -53,7 +68,9 @@ namespace WpfApp1.Utility
 
             // Draw Element
             var formattedText = element.GetFormattedName(canvas);
-            Point textPoint = new(startingPoint.X + x * elementSpacing - formattedText.Width / 2, startingPoint.Y + y * elementSpacing - formattedText.Height / 2);
+            Point textPoint = new(
+                startingPoint.X + x * elementSpacing - formattedText.Width / 2,
+                startingPoint.Y + y * elementSpacing - formattedText.Height / 2);
 
             drawingContext.DrawText(formattedText, textPoint);
 
