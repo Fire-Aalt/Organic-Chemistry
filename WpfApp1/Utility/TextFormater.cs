@@ -25,7 +25,7 @@ namespace WpfApp1.Utility
                       CultureInfo.CurrentCulture,
                       FlowDirection.LeftToRight,
                       new Typeface("Verdana"),
-                      8,
+                      10,
                       Brushes.Black,
                       VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
                 default:

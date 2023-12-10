@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using WpfApp1.Chemistry.Element;
@@ -20,9 +19,6 @@ namespace WpfApp1.Utility
         public Point startingPoint;
         public int elementSpacing;
         public int mainRow;
-
-        public int connectionSpacing = 5;
-        public double connectionPadding = 1.5;
 
         public CancellationTokenSource cts;
 
@@ -70,16 +66,16 @@ namespace WpfApp1.Utility
             if (element == null) return drawingContext;
 
             // Draw Element
-            var formula = element.GetFormula(canvas);
+            element.FinalizeFormula(canvas);
             Point formulaPoint = new(
                 startingPoint.X + x * elementSpacing - element.FormulaSize.Width / 2,
                 startingPoint.Y + y * elementSpacing - element.FormulaSize.Height / 2);
 
             Point textPoint = formulaPoint;
-            foreach (var text in formula)
+            foreach (var text in element.Formula)
             {
                 if (text.style == TextStyle.Index)
-                    textPoint.Y = formulaPoint.Y + formula[0].formatted.Height * (1 - DrawingSettings.indexOverlapPercent);
+                    textPoint.Y = formulaPoint.Y + element.Formula[0].formatted.Height * (1 - DrawingSettings.indexOverlapPercent);
                 else
                     textPoint.Y = formulaPoint.Y;
 
@@ -107,6 +103,7 @@ namespace WpfApp1.Utility
                 var pos = MatrixUtil.TryGetElementPos(ref matrix, x, y, connection.Key);
                 if (pos != null)
                 {
+                    matrix[pos.Item1, pos.Item2].FinalizeFormula(canvas);
                     drawingContext = DrawConnection(drawingContext, x, y, pos.Item1, pos.Item2, connection.Value);
                     DrawnConnections.Add(link);
                 }
@@ -124,8 +121,8 @@ namespace WpfApp1.Utility
             if (x1 < x2)
             {
                 textOffsets = new Tuple<Point, Point>(
-                    new(size1.Width + connectionPadding, size1.Height / 2),
-                    new(-connectionPadding, size2.Height / 2));
+                    new(size1.Width + DrawingSettings.connectionPadding, size1.Height / 2),
+                    new(-DrawingSettings.connectionPadding, size2.Height / 2));
             }
             else if (y1 < y2)
             {
@@ -163,24 +160,24 @@ namespace WpfApp1.Utility
         private Tuple<Point, Point> GetAdjustedPoints(Tuple<Point, Point> centerPoints, Tuple<Point, Point> textOffsets, int i, bool even)
         {
             Point point1 = centerPoints.Item1, point2 = centerPoints.Item2;
-            if (textOffsets.Item2.X == 0 || Math.Abs(textOffsets.Item2.X) == connectionPadding)
+            if (textOffsets.Item2.X == 0 || Math.Abs(textOffsets.Item2.X) == DrawingSettings.connectionPadding)
             {
-                point1.Y += connectionSpacing * i;
-                point2.Y += connectionSpacing * i;
+                point1.Y += DrawingSettings.connectionSpacing * i;
+                point2.Y += DrawingSettings.connectionSpacing * i;
                 if (even)
                 {
-                    point1.Y -= connectionSpacing / 2 * Math.Sign(i);
-                    point2.Y -= connectionSpacing / 2 * Math.Sign(i);
+                    point1.Y -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
+                    point2.Y -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
                 }
             }
-            else if (textOffsets.Item2.Y == 0 || Math.Abs(textOffsets.Item2.Y) == connectionPadding)
+            else if (textOffsets.Item2.Y == 0 || Math.Abs(textOffsets.Item2.Y) == DrawingSettings.connectionPadding)
             {
-                point1.X += connectionSpacing * i;
-                point2.X += connectionSpacing * i;
+                point1.X += DrawingSettings.connectionSpacing * i;
+                point2.X += DrawingSettings.connectionSpacing * i;
                 if (even)
                 {
-                    point1.X -= connectionSpacing / 2 * Math.Sign(i);
-                    point2.X -= connectionSpacing / 2 * Math.Sign(i);
+                    point1.X -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
+                    point2.X -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
                 }
             }
 
