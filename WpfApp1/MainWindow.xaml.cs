@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfApp1.Chemistry.Element;
+using WpfApp1.Chemistry.Elements;
 using WpfApp1.Utility;
 
 namespace WpfApp1
@@ -42,7 +42,7 @@ namespace WpfApp1
                 int strength = rng.Next(1, 4);
 
                 if (_matrix[x, y] != null) continue;
-                Element element = new Carbon();
+                Element element = new Carbon(x, y);
 
                 if (y == mainRow || (checkBox.IsChecked ?? false))
                 {

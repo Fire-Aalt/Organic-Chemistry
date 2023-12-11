@@ -5,7 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using WpfApp1.Chemistry.Element;
+using WpfApp1.Chemistry;
+using WpfApp1.Chemistry.Elements;
 using WpfApp1.Config;
 using Point = System.Windows.Point;
 
@@ -22,7 +23,7 @@ namespace WpfApp1.Utility
 
         public CancellationTokenSource cts;
 
-        public List<Tuple<Element, Element>> DrawnConnections = new();
+        public List<ElementConnection> DrawnConnections = new();
 
         public MatrixDrawer(Element[,] matrix, Canvas canvas) 
         {
@@ -50,7 +51,7 @@ namespace WpfApp1.Utility
                     {
                         await Task.Delay(drawDelay, cts.Token);
                     }
-                    catch (Exception _)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -63,7 +64,6 @@ namespace WpfApp1.Utility
         private DrawingContext DrawElement(DrawingContext drawingContext, int x, int y)
         {
             Element element = matrix[x, y];
-            if (element == null) return drawingContext;
 
             // Draw Element
             element.FinalizeFormula(canvas);
@@ -86,27 +86,13 @@ namespace WpfApp1.Utility
             // Draw Connections
             foreach (var connection in element.Connections)
             {
-                Tuple<Element, Element> link = new(element, connection.Key);
-                Tuple<Element, Element> swappedLink = new(connection.Key, element);
+                ElementConnection elementConnection = new(element, connection.Key);
+                if (DrawnConnections.Contains(elementConnection)) continue;
 
-                bool exists = false;
-                for (int i = 0; i < DrawnConnections.Count; i++)
-                {
-                    if (DrawnConnections[i] == link || DrawnConnections[i] == swappedLink)
-                    {
-                        exists = true; 
-                        break;
-                    }
-                }
-                if (exists) continue;
+                matrix[connection.Key.x, connection.Key.y].FinalizeFormula(canvas);
 
-                var pos = MatrixUtil.TryGetElementPos(ref matrix, x, y, connection.Key);
-                if (pos != null)
-                {
-                    matrix[pos.Item1, pos.Item2].FinalizeFormula(canvas);
-                    drawingContext = DrawConnection(drawingContext, x, y, pos.Item1, pos.Item2, connection.Value);
-                    DrawnConnections.Add(link);
-                }
+                drawingContext = DrawConnection(drawingContext, x, y, connection.Key.x, connection.Key.y, connection.Value);
+                DrawnConnections.Add(elementConnection);
             }
 
             return drawingContext;
@@ -133,17 +119,16 @@ namespace WpfApp1.Utility
             else
                 return drawingContext;
 
-            var centerPoints = new Tuple<Point, Point>(
+            var centerPoints = new PointsConnection(
                 GetCenterPoint(textOffsets.Item1, x1, y1, size1),
                 GetCenterPoint(textOffsets.Item2, x2, y2, size2));
 
-            bool even = strength % 2 == 0;
             for (int i = -strength / 2; i <= strength / 2; i++)
             {
-                if (i == 0 && even) continue;
+                if (i == 0 && strength % 2 == 0) continue;
 
-                var points = GetAdjustedPoints(centerPoints, textOffsets, i, even);
-                drawingContext.DrawLine(new Pen(Brushes.Black, 1), points.Item1, points.Item2);
+                var connection = GetAdjustedConnection(new PointsConnection(centerPoints), textOffsets, strength, i);
+                drawingContext.DrawLine(new Pen(Brushes.Black, DrawingSettings.connectionWidth), connection.point1, connection.point2);
             }
 
             return drawingContext;
@@ -157,31 +142,24 @@ namespace WpfApp1.Utility
             );
         }
 
-        private Tuple<Point, Point> GetAdjustedPoints(Tuple<Point, Point> centerPoints, Tuple<Point, Point> textOffsets, int i, bool even)
+        private PointsConnection GetAdjustedConnection(PointsConnection connection, Tuple<Point, Point> textOffsets, int strength, int i)
         {
-            Point point1 = centerPoints.Item1, point2 = centerPoints.Item2;
             if (textOffsets.Item2.X == 0 || Math.Abs(textOffsets.Item2.X) == DrawingSettings.connectionPadding)
             {
-                point1.Y += DrawingSettings.connectionSpacing * i;
-                point2.Y += DrawingSettings.connectionSpacing * i;
-                if (even)
-                {
-                    point1.Y -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
-                    point2.Y -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
-                }
+                connection.AddY(i * (DrawingSettings.connectionSpacing + DrawingSettings.connectionWidth));
+
+                if (strength % 2 == 0)
+                    connection.SubtractY(DrawingSettings.connectionSpacing / 2 * Math.Sign(i));
             }
             else if (textOffsets.Item2.Y == 0 || Math.Abs(textOffsets.Item2.Y) == DrawingSettings.connectionPadding)
             {
-                point1.X += DrawingSettings.connectionSpacing * i;
-                point2.X += DrawingSettings.connectionSpacing * i;
-                if (even)
-                {
-                    point1.X -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
-                    point2.X -= DrawingSettings.connectionSpacing / 2 * Math.Sign(i);
-                }
+                connection.AddX(i * (DrawingSettings.connectionSpacing + DrawingSettings.connectionWidth));
+
+                if (strength % 2 == 0)
+                    connection.SubtractX(DrawingSettings.connectionSpacing / 2 * Math.Sign(i));
             }
 
-            return new Tuple<Point, Point>(point1, point2);
+            return connection;
         }
     }
 }

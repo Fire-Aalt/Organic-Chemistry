@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Media;
 using WpfApp1.Utility;
 
-namespace WpfApp1.Chemistry.Element
+namespace WpfApp1.Chemistry.Elements
 {
     public abstract class Element
     {
@@ -14,14 +14,19 @@ namespace WpfApp1.Chemistry.Element
         public List<Text> Formula = new();
         public SizeF FormulaSize = new();
 
+        public int x, y;
+
         private bool _finalized = false;
 
         public Dictionary<Element, int> Connections { get; set; }
 
-        public Element()
+
+        public Element(int x, int y)
         {
             AvalableValency = Valency;
             Connections = new Dictionary<Element, int>();
+            this.x = x;
+            this.y = y;
         }
 
         public virtual string GetName()

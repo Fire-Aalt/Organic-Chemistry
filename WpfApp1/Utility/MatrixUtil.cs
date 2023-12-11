@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfApp1.Chemistry.Element;
+using System.Drawing;
+using WpfApp1.Chemistry.Elements;
 
 namespace WpfApp1.Utility
 {
@@ -17,18 +14,6 @@ namespace WpfApp1.Utility
             {
                 return matrix[x, y];
             }
-            return null;
-        }
-
-        public static Tuple<int, int>? TryGetElementPos(ref Element[,] matrix, int x, int y, Element element)
-        {
-            for (int i = 0; i < Corners.GetLength(0); i++)
-            {
-                Element? found = TryGet(ref matrix, x + Corners[i, 0], y + Corners[i, 1]);
-                if (element == found)
-                    return new Tuple<int, int>(x + Corners[i, 0], y + Corners[i, 1]);
-            }
-
             return null;
         }
     }

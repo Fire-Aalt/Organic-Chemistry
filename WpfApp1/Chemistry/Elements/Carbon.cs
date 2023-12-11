@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfApp1.Chemistry.Element
+namespace WpfApp1.Chemistry.Elements
 {
     public class Carbon : Element
     {
+        public Carbon(int x, int y) : base(x, y)
+        {
+         
+        }
+
         public override string Symbol => "C";
         public override int Valency => 4;
 
