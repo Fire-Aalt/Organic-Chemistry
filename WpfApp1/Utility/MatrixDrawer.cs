@@ -32,6 +32,13 @@ namespace WpfApp1.Utility
             this.canvas = canvas;
         }
 
+        /// <summary>
+        /// Draws matrix
+        /// </summary>
+        /// <param name="startingPoint"></param>
+        /// <param name="spacing"></param>
+        /// <param name="drawDelay"></param>
+        /// <returns></returns>
         public async Task DrawMatrix(Point startingPoint, int spacing, int drawDelay)
         {
             this.startingPoint = startingPoint;
@@ -61,21 +68,28 @@ namespace WpfApp1.Utility
             }
         }
 
+        /// <summary>
+        /// Draws element at coordinates
+        /// </summary>
+        /// <param name="drawingContext"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         private DrawingContext DrawElement(DrawingContext drawingContext, int x, int y)
         {
             Element element = matrix[x, y];
 
             // Draw Element
-            element.FinalizeFormula(canvas);
+            element.GenerateFormula(canvas);
             Point formulaPoint = new(
-                startingPoint.X + x * elementSpacing - element.FormulaSize.Width / 2,
-                startingPoint.Y + y * elementSpacing - element.FormulaSize.Height / 2);
+                startingPoint.X + x * elementSpacing - element.Formula.Size.Width / 2,
+                startingPoint.Y + y * elementSpacing - element.Formula.Size.Height / 2);
 
             Point textPoint = formulaPoint;
-            foreach (var text in element.Formula)
+            foreach (var text in element.Formula.Name)
             {
                 if (text.style == TextStyle.Index)
-                    textPoint.Y = formulaPoint.Y + element.Formula[0].formatted.Height * (1 - DrawingSettings.indexOverlapPercent);
+                    textPoint.Y = formulaPoint.Y + element.Formula.Name[0].formatted.Height * (1 - DrawingSettings.indexOverlapPercent);
                 else
                     textPoint.Y = formulaPoint.Y;
 
@@ -89,7 +103,7 @@ namespace WpfApp1.Utility
                 ElementConnection elementConnection = new(element, connection.Key);
                 if (DrawnConnections.Contains(elementConnection)) continue;
 
-                matrix[connection.Key.x, connection.Key.y].FinalizeFormula(canvas);
+                matrix[connection.Key.x, connection.Key.y].GenerateFormula(canvas);
 
                 drawingContext = DrawConnection(drawingContext, x, y, connection.Key.x, connection.Key.y, connection.Value);
                 DrawnConnections.Add(elementConnection);
@@ -98,10 +112,20 @@ namespace WpfApp1.Utility
             return drawingContext;
         }
 
+        /// <summary>
+        /// Draws connection between 2 elements at coordinates with given strength
+        /// </summary>
+        /// <param name="drawingContext"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <param name="strength"></param>
+        /// <returns></returns>
         private DrawingContext DrawConnection(DrawingContext drawingContext, int x1, int y1, int x2, int y2, int strength)
         {
-            var size1 = matrix[x1, y1].FormulaSize;
-            var size2 = matrix[x2, y2].FormulaSize;
+            var size1 = matrix[x1, y1].Formula.Size;
+            var size2 = matrix[x2, y2].Formula.Size;
 
             Tuple<Point, Point> textOffsets;
             if (x1 < x2)

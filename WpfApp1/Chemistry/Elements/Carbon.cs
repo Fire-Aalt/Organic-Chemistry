@@ -14,7 +14,7 @@ namespace WpfApp1.Chemistry.Elements
         public override string Symbol => "C";
         public override int Valency => 4;
 
-        public override string GetName()
+        public override string GetRawName()
         {
             if (AvalableValency > 1)
                 return Symbol + "H" + AvalableValency;

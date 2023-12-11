@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Media;
-using WpfApp1.Utility;
 
 namespace WpfApp1.Chemistry.Elements
 {
@@ -10,16 +8,12 @@ namespace WpfApp1.Chemistry.Elements
         public abstract string Symbol { get; }
         public abstract int Valency { get; }
 
+        public Formula Formula = new();
         public int AvalableValency;
-        public List<Text> Formula = new();
-        public SizeF FormulaSize = new();
 
         public int x, y;
 
-        private bool _finalized = false;
-
         public Dictionary<Element, int> Connections { get; set; }
-
 
         public Element(int x, int y)
         {
@@ -29,47 +23,15 @@ namespace WpfApp1.Chemistry.Elements
             this.y = y;
         }
 
-        public virtual string GetName()
+        public virtual string GetRawName()
         {
             return Symbol;
         }
 
-        public void FinalizeFormula(Visual visual)
+        public void GenerateFormula(Visual visual)
         {
-            if (_finalized) return;
-            string name = GetName();
-
-            var upperLatter = TextFormater.FormatText("E", TextStyle.Element, visual);
-
-            double height = upperLatter.formatted.Height;
-            double width = 0.0;
-
-            string str = "";
-            bool IsIndex = false;
-            for (int i = 0; i < name.Length; i++)
-            {
-                str += name[i];
-
-                if ((i == name.Length - 1 || char.IsDigit(name[i + 1])) && !IsIndex)
-                {
-                    var text = TextFormater.FormatText(str, TextStyle.Element, visual);
-                    width += text.formatted.Width;
-                    Formula.Add(text);
-                    IsIndex = true;
-                    str = "";
-                }
-                else if ((i == name.Length - 1 || !char.IsDigit(name[i + 1])) && IsIndex)
-                {
-                    var text = TextFormater.FormatText(str, TextStyle.Index, visual);
-                    width += text.formatted.Width;
-                    Formula.Add(text);
-                    IsIndex = false;
-                    str = "";
-                }
-            }
-
-            FormulaSize = new((float)width, (float)height);
-            _finalized = true;
+            if (Formula.rawName == string.Empty)
+                Formula = new Formula(GetRawName(), visual);
         }
 
         public bool ConnectTo(Element? element, int strength)
