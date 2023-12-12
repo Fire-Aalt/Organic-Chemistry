@@ -48,7 +48,25 @@ namespace WpfApp1.Utility
             {
                 for (int y = 0; y < matrix.GetLength(1); y++)
                 {
-                    if (matrix[x, y] == null) continue;
+                    if (matrix[x, y] == null)
+                    {
+                        DrawingVisual visual1 = new();
+                        using DrawingContext drawingContext1 = visual1.RenderOpen();
+
+                        Point formulaPoint = new(
+                            startingPoint.X + x * elementSpacing,
+                            startingPoint.Y + y * elementSpacing);
+                        drawingContext1.DrawEllipse(
+                            Brushes.Black,
+                            new Pen(Brushes.Black, DrawingSettings.connectionWidth),
+                            formulaPoint,
+                            2,
+                            2
+                            );
+
+                        canvas.Children.Add(new VisualHost { Visual = visual1 });
+                        continue;
+                    }
 
                     DrawingVisual visual = new();
                     using DrawingContext drawingContext = visual.RenderOpen();

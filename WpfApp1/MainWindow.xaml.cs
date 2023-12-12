@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using WpfApp1.Algorithm;
 using WpfApp1.Chemistry.Elements;
 using WpfApp1.Utility;
 
@@ -11,7 +12,6 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Element[,] _matrix = new Element[0, 0];
         public MatrixDrawer? matrixDrawer = null;
 
         public Point startingPoint = new(100, 50);
@@ -26,43 +26,16 @@ namespace WpfApp1
         // Fill the matrix
         public async Task CreateMatrix()
         {
-            int numberOfElements = int.Parse(carbonBox.Text);
-            _matrix = new Element[numberOfElements, numberOfElements];
+            var isomer = new IsomerAlgorithm(int.Parse(carbonBox.Text), 0, 0, 0, (checkBox.IsChecked ?? false));
+            isomer.Start();
 
-            int mainRow = _matrix.GetLength(0) / 2;
-            if (_matrix.GetLength(0) % 2 == 0)
-                mainRow--;
-
-            numberOfElements *= 3;
-            var rng = new Random();
-            for (int i = 0; i < numberOfElements; i++)
-            {
-                int x = rng.Next(0, _matrix.GetLength(0));
-                int y = rng.Next(0, _matrix.GetLength(1));
-                int strength = rng.Next(1, 4);
-
-                if (_matrix[x, y] != null) continue;
-                Element element = new Carbon(x, y);
-
-                if (y == mainRow || (checkBox.IsChecked ?? false))
-                {
-                    element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x + 1, y), strength);
-                    element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x - 1, y), strength);
-                }
-
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y + 1), strength);
-                element.ConnectTo(MatrixUtil.TryGet(ref _matrix, x, y - 1), strength);
-
-                _matrix[x, y] = element;
-            }
-
-            await DrawMatrix();
+            await DrawMatrix(isomer.matrix);
         }
 
         // Draw the matrix
-        public async Task DrawMatrix()
+        public async Task DrawMatrix(Element[,] matrix)
         {
-            matrixDrawer = new MatrixDrawer(_matrix, canvas);
+            matrixDrawer = new MatrixDrawer(matrix, canvas);
 
             await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay);
         }
