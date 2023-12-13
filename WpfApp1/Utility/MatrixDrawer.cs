@@ -39,7 +39,7 @@ namespace WpfApp1.Utility
         /// <param name="spacing"></param>
         /// <param name="drawDelay"></param>
         /// <returns></returns>
-        public async Task DrawMatrix(Point startingPoint, int spacing, int drawDelay)
+        public async Task DrawMatrix(Point startingPoint, int spacing, int drawDelay, bool createGrid)
         {
             this.startingPoint = startingPoint;
             this.elementSpacing = spacing;
@@ -48,8 +48,9 @@ namespace WpfApp1.Utility
             {
                 for (int y = 0; y < matrix.GetLength(1); y++)
                 {
-                    if (matrix[x, y] == null)
+                    if (matrix[x, y] == null && createGrid)
                     {
+                        
                         DrawingVisual visual1 = new();
                         using DrawingContext drawingContext1 = visual1.RenderOpen();
 
@@ -65,8 +66,8 @@ namespace WpfApp1.Utility
                             );
 
                         canvas.Children.Add(new VisualHost { Visual = visual1 });
-                        continue;
                     }
+                    if (matrix[x, y] == null) continue;
 
                     DrawingVisual visual = new();
                     using DrawingContext drawingContext = visual.RenderOpen();

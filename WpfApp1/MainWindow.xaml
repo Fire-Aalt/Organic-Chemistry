@@ -16,31 +16,47 @@
             <Label
                 Content="Carbon: " />
             <TextBox 
+                Text="1"
                 x:Name="carbonBox"
                 MinWidth="30" 
                 Margin="4" />
             <Label
                 Content="Chlor: " />
             <TextBox 
+                Text="0"
                 x:Name="chlorBox"
                 MinWidth="30" 
                 Margin="4" />
+            <Label
+                Content="Brom: " />
+            <TextBox 
+                Text="0"
+                x:Name="bromBox"
+                MinWidth="30" 
+                Margin="4" />
+            <Label
+                Content="Iodine: " />
+            <TextBox 
+                Text="0"
+                x:Name="iodineBox"
+                MinWidth="30" 
+                Margin="4" />
+            <ComboBox
+                x:Name="isomerType"
+                Width="100"
+                Height="22"
+                ItemsSource="{Binding IsomerType}"
+                SelectedItem="Alkane"
+                />  
             <Button 
                 Content="Create" 
                 Padding="2" 
                 Margin="4" Click="Button_Click" />
             <Label
-                Content="Draw Delay: " Height="29" />
-            <TextBox 
-                x:Name="drawDelayBox"
-                Text="1"
-                MinWidth="30" 
-                Margin="4" Height="20" Width="22" />
-            <Label
-                Content="Free layout: " Width="71" Height="28" />
-            <CheckBox
-                x:Name="checkBox" Height="15"
-                ></CheckBox>
+                Content="Create Grid: " Height="29" />
+            <CheckBox 
+                x:Name="createGrifCheckBox"
+                Height="16"/>
         </StackPanel>
 
         <ScrollViewer 

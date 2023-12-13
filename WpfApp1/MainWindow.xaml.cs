@@ -12,24 +12,28 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        public string[] IsomerType { get; set; } 
         public MatrixDrawer? matrixDrawer = null;
 
         public Point startingPoint = new(100, 50);
         public int spacing = 50;
-        public int drawDelay = 1;
+        public int drawDelay = 0;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            IsomerType = new string[] { "Alkane", "Alkene", "Alkyne", "Alkadiene"};
+            DataContext = this;
         }
 
         // Fill the matrix
         public async Task CreateMatrix()
         {
-            var isomer = new IsomerAlgorithm(int.Parse(carbonBox.Text), 0, 0, 0, (checkBox.IsChecked ?? false));
-            isomer.Start();
+            var isomerAlgo = new IsomerAlgorithm(int.Parse(carbonBox.Text), int.Parse(chlorBox.Text), int.Parse(bromBox.Text), int.Parse(iodineBox.Text), isomerType.Text);
+            isomerAlgo.Start();
 
-            await DrawMatrix(isomer.matrix);
+            await DrawMatrix(isomerAlgo.matrix);
         }
 
         // Draw the matrix
@@ -37,12 +41,12 @@ namespace WpfApp1
         {
             matrixDrawer = new MatrixDrawer(matrix, canvas);
 
-            await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay);
+            await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay, createGrifCheckBox.IsChecked ??= false);
         }
 
         public async Task ClearCanvas()
         {
-            drawDelay = int.Parse(drawDelayBox.Text);
+            drawDelay = 0;
             matrixDrawer?.cts?.Cancel();
 
             await Task.Delay(drawDelay);
