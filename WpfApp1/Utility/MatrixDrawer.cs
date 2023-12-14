@@ -20,16 +20,18 @@ namespace WpfApp1.Utility
         public Point startingPoint;
         public int elementSpacing;
         public int mainRow;
+        public int mainRowY;
 
         public CancellationTokenSource cts;
 
         public List<ElementConnection> DrawnConnections = new();
 
-        public MatrixDrawer(Element[,] matrix, Canvas canvas) 
+        public MatrixDrawer(Element[,] matrix, Canvas canvas, int mainRowY) 
         {
             cts = new CancellationTokenSource();
             this.matrix = matrix;
             this.canvas = canvas;
+            this.mainRowY = mainRowY;
         }
 
         /// <summary>
@@ -115,6 +117,8 @@ namespace WpfApp1.Utility
                 drawingContext.DrawText(text.formatted, textPoint);
                 textPoint.X += text.formatted.Width;
             }
+            if (y == mainRowY && element is Carbon)
+                drawingContext = DrawOrder(drawingContext, element, formulaPoint);
 
             // Draw Connections
             foreach (var connection in element.Connections)
@@ -177,6 +181,18 @@ namespace WpfApp1.Utility
             return drawingContext;
         }
 
+        private DrawingContext DrawOrder(DrawingContext drawingContext, Element element, Point formulaPoint)
+        {
+            var text = TextFormater.FormatText(element.x.ToString(), TextStyle.Order, canvas);
+
+            formulaPoint.X -= text.formatted.Width;
+            formulaPoint.Y -= text.formatted.Height;
+
+            drawingContext.DrawText(text.formatted, formulaPoint);
+
+            return drawingContext;
+        }
+
         private Point GetCenterPoint(Point textOffset, int x, int y, SizeF size)
         {
             return new Point(
@@ -204,5 +220,6 @@ namespace WpfApp1.Utility
 
             return connection;
         }
+
     }
 }

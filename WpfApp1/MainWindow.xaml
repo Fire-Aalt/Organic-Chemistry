@@ -67,7 +67,7 @@
                 x:Name="canvas"
                 Background="Azure"
                 Width="10000"
-                Height="1000"
+                Height="10000"
                 ></Canvas>
         </ScrollViewer>
     </Grid>

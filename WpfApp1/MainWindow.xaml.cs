@@ -19,6 +19,8 @@ namespace WpfApp1
         public int spacing = 50;
         public int drawDelay = 0;
 
+        public int mainRowY;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,13 +35,14 @@ namespace WpfApp1
             var isomerAlgo = new IsomerAlgorithm(int.Parse(carbonBox.Text), int.Parse(chlorBox.Text), int.Parse(bromBox.Text), int.Parse(iodineBox.Text), isomerType.Text);
             isomerAlgo.Start();
 
+            mainRowY = isomerAlgo.mainRowY;
             await DrawMatrix(isomerAlgo.matrix);
         }
 
         // Draw the matrix
         public async Task DrawMatrix(Element[,] matrix)
         {
-            matrixDrawer = new MatrixDrawer(matrix, canvas);
+            matrixDrawer = new MatrixDrawer(matrix, canvas, mainRowY);
 
             await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay, createGrifCheckBox.IsChecked ??= false);
         }

@@ -26,6 +26,14 @@ namespace WpfApp1.Utility
                       10,
                       Brushes.Black,
                       VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
+                case TextStyle.Order:
+                    return new Text(new FormattedText(text,
+                      CultureInfo.CurrentCulture,
+                      FlowDirection.LeftToRight,
+                      new Typeface("Verdana"),
+                      12,
+                      Brushes.Blue,
+                      VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
                 default:
                     goto case TextStyle.Element;
             }
@@ -35,7 +43,8 @@ namespace WpfApp1.Utility
     public enum TextStyle
     {
         Element,
-        Index
+        Index,
+        Order
     }
 
     public class Text
