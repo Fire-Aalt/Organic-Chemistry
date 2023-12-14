@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace WpfApp1.Chemistry.Elements
+namespace OrganicChemistry.Chemistry.Elements
 {
     public abstract class Element
     {

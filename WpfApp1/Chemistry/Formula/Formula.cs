@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Media;
-using WpfApp1.Utility;
+using OrganicChemistry.Utility;
 
-namespace WpfApp1.Chemistry
+namespace OrganicChemistry.Chemistry
 {
     public class Formula
     {

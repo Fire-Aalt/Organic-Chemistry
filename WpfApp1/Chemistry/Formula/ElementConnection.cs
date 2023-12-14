@@ -1,7 +1,7 @@
 ﻿using System;
-using WpfApp1.Chemistry.Elements;
+using OrganicChemistry.Chemistry.Elements;
 
-namespace WpfApp1.Chemistry
+namespace OrganicChemistry.Chemistry
 {
     public class ElementConnection : IComparable<ElementConnection>
     {

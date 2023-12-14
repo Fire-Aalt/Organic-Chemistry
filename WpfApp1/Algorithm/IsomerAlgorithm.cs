@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using WpfApp1.Chemistry.Elements;
-using WpfApp1.Utility;
+using OrganicChemistry.Chemistry.Elements;
+using OrganicChemistry.Utility;
 
-namespace WpfApp1.Algorithm
+namespace OrganicChemistry.Algorithm
 {
     public class IsomerAlgorithm
     {

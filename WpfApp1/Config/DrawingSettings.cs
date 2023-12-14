@@ -1,4 +1,4 @@
-﻿namespace WpfApp1.Config
+﻿namespace OrganicChemistry.Config
 {
     static class DrawingSettings
     {

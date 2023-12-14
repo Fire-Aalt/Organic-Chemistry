@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using WpfApp1.Chemistry.Elements;
+using OrganicChemistry.Chemistry.Elements;
 
-namespace WpfApp1.Utility
+namespace OrganicChemistry.Utility
 {
     public static class MatrixUtil
     {

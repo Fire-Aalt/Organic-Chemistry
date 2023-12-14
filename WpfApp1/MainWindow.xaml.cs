@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
-using WpfApp1.Algorithm;
-using WpfApp1.Chemistry.Elements;
-using WpfApp1.Utility;
+using OrganicChemistry.Algorithm;
+using OrganicChemistry.Chemistry.Elements;
+using OrganicChemistry.Utility;
 
-namespace WpfApp1
+namespace OrganicChemistry
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

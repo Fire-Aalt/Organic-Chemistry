@@ -5,12 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using WpfApp1.Chemistry;
-using WpfApp1.Chemistry.Elements;
-using WpfApp1.Config;
+using OrganicChemistry.Chemistry;
+using OrganicChemistry.Chemistry.Elements;
+using OrganicChemistry.Config;
 using Point = System.Windows.Point;
 
-namespace WpfApp1.Utility
+namespace OrganicChemistry.Utility
 {
     public class MatrixDrawer
     {

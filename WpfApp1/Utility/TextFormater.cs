@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace WpfApp1.Utility
+namespace OrganicChemistry.Utility
 {
     public static class TextFormater
     {

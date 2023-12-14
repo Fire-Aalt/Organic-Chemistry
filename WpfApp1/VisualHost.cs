@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using System.Windows;
 
-namespace WpfApp1
+namespace OrganicChemistry
 {
     public class VisualHost : UIElement
     {

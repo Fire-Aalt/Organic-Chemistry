@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WpfApp1.Chemistry
+namespace OrganicChemistry.Chemistry
 {
     public class PointsConnection
     {

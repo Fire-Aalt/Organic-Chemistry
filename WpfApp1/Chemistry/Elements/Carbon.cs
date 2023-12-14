@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfApp1.Chemistry.Elements
+namespace OrganicChemistry.Chemistry.Elements
 {
     public class Carbon : Element
     {
