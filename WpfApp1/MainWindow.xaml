@@ -14,28 +14,28 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Label
-                Content="Carbon: " />
+                Content="C: " />
             <TextBox 
                 Text="1"
                 x:Name="carbonBox"
                 MinWidth="30" 
                 Margin="4" />
             <Label
-                Content="Chlor: " />
+                Content="Cl: " />
             <TextBox 
                 Text="0"
                 x:Name="chlorBox"
                 MinWidth="30" 
                 Margin="4" />
             <Label
-                Content="Brom: " />
+                Content="Br: " />
             <TextBox 
                 Text="0"
                 x:Name="bromBox"
                 MinWidth="30" 
                 Margin="4" />
             <Label
-                Content="Iodine: " />
+                Content="I: " />
             <TextBox 
                 Text="0"
                 x:Name="iodineBox"
@@ -52,11 +52,11 @@
                 Content="Create" 
                 Padding="2" 
                 Margin="4" Click="Button_Click" />
-            <Label
+            <!--<Label
                 Content="Create Grid: " Height="29" />
             <CheckBox 
                 x:Name="createGrifCheckBox"
-                Height="16"/>
+                Height="16"/>-->
         </StackPanel>
 
         <ScrollViewer 

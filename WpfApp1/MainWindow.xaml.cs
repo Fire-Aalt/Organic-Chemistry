@@ -44,7 +44,7 @@ namespace OrganicChemistry
         {
             matrixDrawer = new MatrixDrawer(matrix, canvas, mainRowY);
 
-            await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay, createGrifCheckBox.IsChecked ??= false);
+            await matrixDrawer.DrawMatrix(startingPoint, spacing, drawDelay, false);
         }
 
         public async Task ClearCanvas()
