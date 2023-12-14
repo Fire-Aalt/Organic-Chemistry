@@ -37,14 +37,34 @@ namespace WpfApp1.Algorithm
 
         public void Start()
         {
-            int branches = (int)Math.Ceiling(numberOfSubElements / 2.0);
-            if (branches > carbon)
+            bool canBeGenerated = false;
+            int minCarbon = 1;
+            switch (isomerType)
+            {
+                case "Alkane":
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0) <= carbon;
+                    break;
+                case "Alkene":
+                    minCarbon = 2;
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 0.5) <= carbon;
+                    break;
+                case "Alkyne":
+                    minCarbon = 2;
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 0.5) <= carbon;
+                    break;
+                case "Alkadiene":
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 1) <= carbon;
+                    minCarbon = 3;
+                    break;
+            }
+
+            if (!canBeGenerated)
             {
                 MessageBox.Show("Impossible configuration detected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            for (int i = 1; i <= carbon; i++)
+            for (int i = minCarbon; i <= carbon; i++)
             {
                 unsearchedConfigurations.Add(i);
             }
@@ -82,10 +102,66 @@ namespace WpfApp1.Algorithm
             availableBranches.Clear();
 
             int availableCarbon = carbon - mainRowLength;
-            for (int x = 1; x <= mainRowLength; x++)
+            switch (isomerType)
             {
-                AddElement(new Carbon(x, y));
-                availableBranches.Add(x, new Branch());
+                case "Alkane":
+                    for (int x = 1; x <= mainRowLength; x++)
+                    {
+                        AddElement(new Carbon(x, y));
+                        availableBranches.Add(x, new Branch());
+                    }
+                    break;
+                case "Alkene":
+                    int con = rng.Next(2, 2 + mainRowLength / 2);
+
+                    for (int x = 1; x <= mainRowLength; x++)
+                    {
+                        if (x == con)
+                        {
+                            AddElement(new Carbon(x, y), 2);
+                            availableBranches.Add(x, new Branch());
+                            continue;
+                        }
+
+                        AddElement(new Carbon(x, y));
+                        availableBranches.Add(x, new Branch());
+                    }
+                    break;
+                case "Alkyne":
+                    for (int x = 1; x <= mainRowLength; x++)
+                    {
+                        if (x == 2)
+                        {
+                            AddElement(new Carbon(x, y), 3);
+                            availableBranches.Add(x, new Branch());
+                            continue;
+                        }
+
+                        AddElement(new Carbon(x, y));
+                        availableBranches.Add(x, new Branch());
+                    }
+                    break;
+                case "Alkadiene":
+                    int con1 = rng.Next(2, 2 + mainRowLength / 2);
+                    int con2 = con1;
+                    while (con2 == con1)
+                    {
+                        con2 = rng.Next(2, 3 + mainRowLength - con1);
+                    }
+
+                    for (int x = 1; x <= mainRowLength; x++)
+                    {
+                        if (x == con1 || x == con2)
+                        {
+                            AddElement(new Carbon(x, y), 2);
+                            availableBranches.Add(x, new Branch());
+                            continue;
+                        }
+
+                        AddElement(new Carbon(x, y));
+                        availableBranches.Add(x, new Branch());
+                    }
+                    break;
             }
 
             int iteration = 0;
@@ -98,78 +174,10 @@ namespace WpfApp1.Algorithm
             if (availableCarbon > 0)
                 return false;
 
-            List<KeyValuePair<int, Branch>> available = availableBranches.Where(b => b.Value.OneAvailable()).ToList();
-            if (available.Count == 0)
-                return false;
-
-            int usedChlor = 0, usedBrom = 0, usedIodine = 0;
-            for (int i = 0; i < numberOfSubElements; i++)
-            {
-                if (available.Count == 0)
-                    return false;
-
-                KeyValuePair<int, Branch> branch;
-                while (true)
-                {
-                    int index = rng.Next(0, available.Count);
-                    branch = available[index];
-
-                    x = branch.Key;
-                    if ((x - 1) <= orderedBranch)
-                        break;
-                }
-
-                int newOrderedBranch = mainRowLength - x;
-                if (newOrderedBranch > orderedBranch)
-                    orderedBranch = newOrderedBranch;
-
-                if (branch.Value.BothAvailable())
-                {
-                    int turn = rng.Next(-1, 1);
-                    if (turn == -1)
-                    {
-                        branch.Value.lower = false;
-                        y = mainRowY - 1;
-                    }
-                    else
-                    {
-                        branch.Value.upper = false;
-                        y = mainRowY + 1;
-                    }
-                }
-                else
-                {
-                    if (branch.Value.upper)
-                        y = mainRowY + 1;
-                    else
-                        y = mainRowY - 1;
-
-                    available.Remove(branch);
-                }
-
-                if (usedChlor != chlor)
-                {
-                    AddElement(new Chlor(x, y));
-                    usedChlor++;
-                }
-                else if (usedBrom != brom)
-                {
-                    AddElement(new Brom(x, y));
-                    usedBrom++;
-                }
-                else if (usedIodine != iodine)
-                {
-                    AddElement(new Iodine(x, y));
-                    usedIodine++;
-                }
-            }
-
-            if (usedChlor != chlor || usedBrom != brom || usedIodine != iodine)
-                return false;
-            return true;
+            return GenerateHalogens();
         }
 
-        public int GenerateBranches(int availableCarbon)
+        private int GenerateBranches(int availableCarbon)
         {
             x = 1;
             int maxBranch = 0;
@@ -179,17 +187,13 @@ namespace WpfApp1.Algorithm
                 int turn = rng.Next(-1, 2);
                 if (turn != 0 && maxBranch > 0 && (x - 1) <= orderedBranch)
                 {
-                    bool occupied;
+                    bool available;
                     if (turn == -1)
-                        occupied = availableBranches[x].lower;
+                        available = availableBranches[x].lower;
                     else
-                        occupied = availableBranches[x].upper;
+                        available = availableBranches[x].upper;
 
-                    if (!occupied && carbon - occupiedBranches == subElementBranches) 
-                    {
-
-                    }
-                    else
+                    if (!(!available && carbon - occupiedBranches == subElementBranches)) 
                     {
                         var branch = rng.Next(1, Math.Min(availableCarbon, maxBranch));
                         int usedCarbon = CreateBranch(maxBranch, branch, turn);
@@ -232,9 +236,98 @@ namespace WpfApp1.Algorithm
             return availableCarbon;
         }
 
+        private bool GenerateHalogens()
+        {
+            List<KeyValuePair<int, Branch>> available = availableBranches.Where(b => b.Value.OneAvailable()).ToList();
+            available.Add(new KeyValuePair<int, Branch>(1, new Branch(left: true)));
+            available.Add(new KeyValuePair<int, Branch>(mainRowLength, new Branch(right: true)));
+
+            if (available.Count == 0)
+                return false;
+
+            int usedChlor = 0, usedBrom = 0, usedIodine = 0;
+            for (int i = 0; i < numberOfSubElements; i++)
+            {
+                if (available.Count == 0)
+                    return false;
+
+                KeyValuePair<int, Branch> branch;
+                while (true)
+                {
+                    int index = rng.Next(0, available.Count);
+                    branch = available[index];
+
+                    x = branch.Key;
+                    if ((x - 1) <= orderedBranch)
+                        break;
+                }
+
+                if (!CanConnect(matrix[x, mainRowY]))
+                {
+                    available.Remove(branch);
+                    continue;
+                }
+
+                int newOrderedBranch = mainRowLength - x;
+                if (newOrderedBranch > orderedBranch)
+                    orderedBranch = newOrderedBranch;
+
+                if (branch.Value.BothAvailable())
+                {
+                    int turn = rng.Next(-1, 1);
+                    if (turn == -1)
+                    {
+                        branch.Value.lower = false;
+                        y = mainRowY - 1;
+                    }
+                    else
+                    {
+                        branch.Value.upper = false;
+                        y = mainRowY + 1;
+                    }
+                }
+                else if (branch.Value.OneAvailable())
+                {
+                    if (branch.Value.upper)
+                        y = mainRowY + 1;
+                    else
+                        y = mainRowY - 1;
+
+                    available.Remove(branch);
+                }
+                else if (branch.Value.left)
+                    x--;
+                else
+                    x++;
+
+                if (usedChlor != chlor)
+                {
+                    AddElement(new Chlor(x, y));
+                    usedChlor++;
+                }
+                else if (usedBrom != brom)
+                {
+                    AddElement(new Brom(x, y));
+                    usedBrom++;
+                }
+                else if (usedIodine != iodine)
+                {
+                    AddElement(new Iodine(x, y));
+                    usedIodine++;
+                }
+            }
+
+            if (usedChlor != chlor || usedBrom != brom || usedIodine != iodine)
+                return false;
+            return true;
+        }
+
         private int CreateBranch(int maxBranch, int carbon, int yMultiplier)
         {
             int usedCarbon = 0;
+            if (!CanConnect(matrix[x, mainRowY])) 
+                return 0;
+
             for (int i = 1; i <= maxBranch; i++)
             {
                 int y = mainRowY + yMultiplier * i;
@@ -268,6 +361,26 @@ namespace WpfApp1.Algorithm
             element.ConnectTo(MatrixUtil.TryGet(ref matrix, x, y + 1), 1);
             element.ConnectTo(MatrixUtil.TryGet(ref matrix, x, y - 1), 1);
         }
+
+        private void AddElement<T>(T element, int strengthWithPrev) where T : Element
+        {
+            int x = element.x; int y = element.y;
+            matrix[x, y] = element;
+
+            if (y == mainRowY)
+            {
+                element.ConnectTo(MatrixUtil.TryGet(ref matrix, x + 1, y), 1);
+                element.ConnectTo(MatrixUtil.TryGet(ref matrix, x - 1, y), strengthWithPrev);
+            }
+
+            element.ConnectTo(MatrixUtil.TryGet(ref matrix, x, y + 1), 1);
+            element.ConnectTo(MatrixUtil.TryGet(ref matrix, x, y - 1), 1);
+        }
+
+        private bool CanConnect(Element element, int strength = 1)
+        {
+            return element.AvalableValency - strength >= 0;
+        }
     }
 
     public class Branch
@@ -275,15 +388,16 @@ namespace WpfApp1.Algorithm
         public bool upper = true;
         public bool lower = true;
 
+        public bool left;
+        public bool right;
+
+        public Branch(bool left = false, bool right = false) 
+        {
+            this.left = left;
+            this.right = right;
+        }
+
         public bool OneAvailable() => upper || lower;
         public bool BothAvailable() => upper && lower;
-    }
-
-    public enum IsomerType
-    {
-        Alkane,
-        Alkene,
-        Alkyne,
-        Alkadiene
     }
 }
