@@ -42,15 +42,15 @@ namespace WpfApp1.Algorithm
             switch (isomerType)
             {
                 case "Alkane":
-                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0) <= carbon;
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 - 1) <= carbon;
                     break;
                 case "Alkene":
                     minCarbon = 2;
-                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 0.5) <= carbon;
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0) <= carbon;
                     break;
                 case "Alkyne":
                     minCarbon = 2;
-                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 0.5) <= carbon;
+                    canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 1) <= carbon;
                     break;
                 case "Alkadiene":
                     canBeGenerated = (int)Math.Ceiling(numberOfSubElements / 2.0 + 1) <= carbon;
@@ -296,9 +296,17 @@ namespace WpfApp1.Algorithm
                     available.Remove(branch);
                 }
                 else if (branch.Value.left)
+                {
                     x--;
+                    y = mainRowY;
+                    available.Remove(branch);
+                }
                 else
+                {
                     x++;
+                    y = mainRowY;
+                    available.Remove(branch);
+                }
 
                 if (usedChlor != chlor)
                 {
@@ -395,6 +403,12 @@ namespace WpfApp1.Algorithm
         {
             this.left = left;
             this.right = right;
+
+            if (left || right)
+            {
+                upper = false;
+                lower = false;
+            }
         }
 
         public bool OneAvailable() => upper || lower;
