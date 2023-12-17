@@ -44,9 +44,7 @@
                     Text="{Binding ChlorineNumber}"
                     MinWidth="30"
                     Margin="4" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Brom: " />
@@ -55,9 +53,7 @@
                     Text="{Binding BromNumber}"
                     MinWidth="30"
                     Margin="4" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Iodine: " />
@@ -68,23 +64,26 @@
                     Margin="4" />
             </StackPanel>
 
-            <ComboBox
-                VerticalAlignment="Center"
-                VerticalContentAlignment="Center"
-                Width="110"
-                Height="22"
-                Margin="4"
-                SelectedItem="{Binding IsomerTypeSelectedItem}"
-                ItemsSource="{Binding IsomerType}"
-                />
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">				
+			    <ComboBox
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Width="110"
+                    Height="22"
+                    Margin="4"
+                    SelectedItem="{Binding IsomerTypeSelectedItem}"
+                    ItemsSource="{Binding IsomerType}"
+                    />
 
-            <Button
-                Command="{Binding CreateCommand}"
-                VerticalContentAlignment="Center"
-                Content="Create"
-                Padding="6"
-                Margin="4"
-                />
+                <Button
+                    Command="{Binding CreateCommand}"
+                    VerticalContentAlignment="Center"
+                    Content="Create"
+                    Padding="6"
+                    Margin="4"
+                    />
+			</StackPanel>
+
             
         </WrapPanel>
 
@@ -95,8 +94,8 @@
             <Canvas
                 x:Name="canvas"
                 Background="Azure"
-                Width="10000"
-                Height="10000" />
+                Width="0"
+                Height="0" />
         </ScrollViewer>
     </Grid>
 

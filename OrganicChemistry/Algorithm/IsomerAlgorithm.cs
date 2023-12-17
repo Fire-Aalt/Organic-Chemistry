@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 
 namespace OrganicChemistry.Algorithm
 {
@@ -21,7 +22,7 @@ namespace OrganicChemistry.Algorithm
 
         public int mainRowY, mainRowLength;
         public int x, y;
-        public int minY, maxY;
+        public Point min, max;
 
         public int orderedBranch;
         public Dictionary<int, Branch> availableBranches = [];
@@ -81,8 +82,6 @@ namespace OrganicChemistry.Algorithm
                 if (mainRowLength % 2 == 0)
                     orderedBranch--;
 
-                minY = mainRowY;
-                maxY = mainRowY;
                 bool success = CreateConfiguration();
                 if (success) return;
 
@@ -179,12 +178,35 @@ namespace OrganicChemistry.Algorithm
                 return false;
             }
 
-            
+
+            min = new Point(matrix.GetLength(0), matrix.GetLength(1));
+            max = new Point(0, 0);
             for (int x = 0; x < matrix.GetLength(0); x++)
             {
                 for (int y = 0; y < matrix.GetLength(1); y++)
                 {
-                    matrix[x, y]?.GenerateFormula(new Avalonia.Visual());
+                    if (matrix[x, y] != null)
+                    {
+                        matrix[x, y].GenerateFormula(new Visual());
+
+                        if (x < min.X)
+                        {
+                            min = new Point(x, min.Y);
+                        }
+                        else if (x > max.X)
+                        {
+                            max = new Point(x, max.Y);
+                        }
+
+                        if (y < min.Y)
+                        {
+                            min = new Point(min.X, y);
+                        }
+                        else if (y > max.Y)
+                        {
+                            max = new Point(max.X, y);
+                        }
+                    }
                 }
             }
 
@@ -361,15 +383,6 @@ namespace OrganicChemistry.Algorithm
                     int newOrderedBranch = mainRowLength - x;
                     if (newOrderedBranch > orderedBranch)
                         orderedBranch = newOrderedBranch;
-
-                    if (y < minY)
-                    {
-                        minY = y;
-                    }
-                    else if (y > maxY)
-                    {
-                        maxY = y;
-                    }
                 }
 
                 if (usedCarbon == carbon) break;
