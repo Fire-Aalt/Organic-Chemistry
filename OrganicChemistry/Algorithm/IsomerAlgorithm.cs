@@ -9,34 +9,24 @@ using System.Threading.Tasks;
 
 namespace OrganicChemistry.Algorithm
 {
-    public class IsomerAlgorithm
+    public class IsomerAlgorithm(int carbon, int chlor, int brom, int iodine, string isomerType)
     {
         public Random rng = new();
         public Element[,] matrix = new Element[0, 0];
-        public int carbon;
-        public int chlor;
-        public int brom;
-        public int iodine;
-        public string isomerType;
+        public int carbon = carbon;
+        public int chlor = chlor;
+        public int brom = brom;
+        public int iodine = iodine;
+        public string isomerType = isomerType;
 
         public int mainRowY, mainRowLength;
         public int x, y;
 
         public int orderedBranch;
         public Dictionary<int, Branch> availableBranches = [];
-        public int numberOfSubElements, subElementBranches;
+        public int numberOfSubElements = chlor + brom + iodine, subElementBranches;
 
         public List<int> unsearchedConfigurations = [];
-        
-        public IsomerAlgorithm(int carbon, int chlor, int brom, int iodine, string isomerType)
-        {
-            this.carbon = carbon;
-            this.chlor = chlor;
-            this.brom = brom;
-            this.iodine = iodine;
-            this.isomerType = isomerType;
-            numberOfSubElements = chlor + brom + iodine;
-        }
 
         public async Task Start()
         {
@@ -182,7 +172,20 @@ namespace OrganicChemistry.Algorithm
             if (availableCarbon > 0)
                 return false;
 
-            return GenerateHalogens();
+            if (GenerateHalogens())
+            {
+                for (int x = 0; x < matrix.GetLength(0); x++)
+                {
+                    for (int y = 0; y < matrix.GetLength(1); y++)
+                    {
+                        matrix[x, y]?.GenerateFormula(new Avalonia.Visual());
+                    }
+                }
+
+                return true;
+            }
+            else
+                return false;
         }
 
         private int GenerateBranches(int availableCarbon)

@@ -71,7 +71,7 @@
             <ComboBox
                 VerticalContentAlignment="Center"
                 x:Name="isomerType"
-                Width="100"
+                Width="110"
                 Height="22"
                 Margin="4"
                 SelectedItem="{Binding IsomerTypeSelectedItem}"
@@ -86,12 +86,6 @@
                 Margin="4"
                 />
             
-            <CheckBox
-                Content="Create Grid"
-                IsChecked="{Binding CreateGrid}"
-                VerticalAlignment="Center"
-                Height="16"/>
-
         </WrapPanel>
 
         <ScrollViewer
