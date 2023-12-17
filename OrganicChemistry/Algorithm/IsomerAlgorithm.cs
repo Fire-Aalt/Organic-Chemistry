@@ -53,8 +53,8 @@ namespace OrganicChemistry.Algorithm
 
             if (!canBeGenerated)
             {
-              //  var box = MessageBoxManager.GetMessageBoxStandard("Error", "Impossible configuration detected", ButtonEnum.Ok, Icon.Error);
-//                var result = await box.ShowAsync();
+                var box = MessageBoxManager.GetMessageBoxStandard("Error", "Impossible configuration detected", ButtonEnum.Ok, Icon.Error);
+                var result = await box.ShowAsync();
                 return;
             }
 

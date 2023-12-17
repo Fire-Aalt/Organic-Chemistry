@@ -24,7 +24,7 @@
             Grid.Row="0" 
             Orientation="Horizontal" 
             Margin="10">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Carbon: " />
@@ -35,7 +35,7 @@
                     Margin="4" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Chlorine: " />
@@ -46,7 +46,7 @@
                     Margin="4" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Brom: " />
@@ -57,7 +57,7 @@
                     Margin="4" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label
                     VerticalContentAlignment="Center"
                     Content="Iodine: " />
@@ -69,8 +69,8 @@
             </StackPanel>
 
             <ComboBox
+                VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                x:Name="isomerType"
                 Width="110"
                 Height="22"
                 Margin="4"
