@@ -12,20 +12,28 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrganicChemistry.Android", "OrganicChemistry.Android\OrganicChemistry.Android.csproj", "{17A64874-0258-4EFE-B8B1-440B012ABE41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4415943E-EF2A-4561-A17C-6A6146306917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4415943E-EF2A-4561-A17C-6A6146306917}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4415943E-EF2A-4561-A17C-6A6146306917}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4415943E-EF2A-4561-A17C-6A6146306917}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6E66224-5608-45E6-B4F8-4E5F3D1A458F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A64874-0258-4EFE-B8B1-440B012ABE41}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
