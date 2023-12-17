@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Windows.Media;
+﻿using Avalonia;
+using System.Collections.Generic;
 
 namespace OrganicChemistry.Chemistry.Elements
 {
@@ -9,6 +9,7 @@ namespace OrganicChemistry.Chemistry.Elements
         public abstract int Valency { get; }
 
         public Formula Formula = new();
+
         public int AvalableValency;
 
         public int x, y;
@@ -18,7 +19,7 @@ namespace OrganicChemistry.Chemistry.Elements
         public Element(int x, int y)
         {
             AvalableValency = Valency;
-            Connections = new Dictionary<Element, int>();
+            Connections = [];
             this.x = x;
             this.y = y;
         }

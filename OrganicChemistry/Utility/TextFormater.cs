@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Media;
 
 namespace OrganicChemistry.Utility
 {
@@ -16,24 +16,21 @@ namespace OrganicChemistry.Utility
                       FlowDirection.LeftToRight,
                       new Typeface("Verdana"),
                       14,
-                      Brushes.Black,
-                      VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
+                      Brushes.Black), style);
                 case TextStyle.Index:
                     return new Text(new FormattedText(text,
                       CultureInfo.CurrentCulture,
                       FlowDirection.LeftToRight,
                       new Typeface("Verdana"),
                       10,
-                      Brushes.Black,
-                      VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
+                      Brushes.Black), style);
                 case TextStyle.Order:
                     return new Text(new FormattedText(text,
                       CultureInfo.CurrentCulture,
                       FlowDirection.LeftToRight,
                       new Typeface("Verdana"),
                       12,
-                      Brushes.Blue,
-                      VisualTreeHelper.GetDpi(visual).PixelsPerDip), style);
+                      Brushes.Blue), style);
                 default:
                     goto case TextStyle.Element;
             }
@@ -47,15 +44,9 @@ namespace OrganicChemistry.Utility
         Order
     }
 
-    public class Text
+    public class Text(FormattedText formatted, TextStyle style)
     {
-        public FormattedText formatted;
-        public TextStyle style;
-
-        public Text(FormattedText formatted, TextStyle style)
-        {
-            this.formatted = formatted;
-            this.style = style;
-        }
+        public FormattedText formatted = formatted;
+        public TextStyle style = style;
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using Avalonia;
 
 namespace OrganicChemistry.Chemistry
 {
@@ -21,26 +21,26 @@ namespace OrganicChemistry.Chemistry
 
         public void AddX(double value)
         {
-            point1.X += value;
-            point2.X += value;
+            point1 += new Point(value, 0);
+            point2 += new Point(value, 0);
         }
 
         public void SubtractX(double value)
         {
-            point1.X -= value;
-            point2.X -= value;
+            point1 -= new Point(value, 0);
+            point2 -= new Point(value, 0);
         }
 
         public void AddY(double value)
         {
-            point1.Y += value;
-            point2.Y += value;
+            point1 += new Point(0,value);
+            point2 += new Point(0, value);
         }
 
         public void SubtractY(double value)
         {
-            point1.Y -= value;
-            point2.Y -= value;
+            point1 -= new Point(0, value);
+            point2 -= new Point(0, value);
         }
     }
 }

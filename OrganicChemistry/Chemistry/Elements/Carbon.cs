@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OrganicChemistry.Chemistry.Elements
+﻿namespace OrganicChemistry.Chemistry.Elements
 {
-    public class Carbon : Element
+    public class Carbon(int x, int y) : Element(x, y)
     {
-        public Carbon(int x, int y) : base(x, y)
-        {
-         
-        }
-
         public override string Symbol => "C";
         public override int Valency => 4;
 

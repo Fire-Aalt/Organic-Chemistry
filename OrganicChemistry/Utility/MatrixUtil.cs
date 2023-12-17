@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using OrganicChemistry.Chemistry.Elements;
+﻿using OrganicChemistry.Chemistry.Elements;
 
 namespace OrganicChemistry.Utility
 {

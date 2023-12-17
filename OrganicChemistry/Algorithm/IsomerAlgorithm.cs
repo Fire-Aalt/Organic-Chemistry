@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
+﻿using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 using OrganicChemistry.Chemistry.Elements;
 using OrganicChemistry.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OrganicChemistry.Algorithm
 {
@@ -21,10 +23,11 @@ namespace OrganicChemistry.Algorithm
         public int x, y;
 
         public int orderedBranch;
-        public Dictionary<int, Branch> availableBranches = new();
+        public Dictionary<int, Branch> availableBranches = [];
         public int numberOfSubElements, subElementBranches;
 
-        public List<int> unsearchedConfigurations = new();
+        public List<int> unsearchedConfigurations = [];
+        
         public IsomerAlgorithm(int carbon, int chlor, int brom, int iodine, string isomerType)
         {
             this.carbon = carbon;
@@ -35,7 +38,7 @@ namespace OrganicChemistry.Algorithm
             numberOfSubElements = chlor + brom + iodine;
         }
 
-        public void Start()
+        public async Task Start()
         {
             bool canBeGenerated = false;
             int minCarbon = 1;
@@ -60,7 +63,8 @@ namespace OrganicChemistry.Algorithm
 
             if (!canBeGenerated)
             {
-                MessageBox.Show("Impossible configuration detected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+              //  var box = MessageBoxManager.GetMessageBoxStandard("Error", "Impossible configuration detected", ButtonEnum.Ok, Icon.Error);
+//                var result = await box.ShowAsync();
                 return;
             }
 
@@ -88,12 +92,16 @@ namespace OrganicChemistry.Algorithm
 
                 bool success = CreateConfiguration();
                 if (success) return;
-                     
+
                 unsearchedConfigurations.Remove(index);
             }
 
             if (unsearchedConfigurations.Count == 0)
-                MessageBox.Show("Impossible configuration detected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard("Error", "Impossible configuration detected", ButtonEnum.Ok, Icon.Error);
+                var result = await box.ShowAsync();
+                return;
+            }
         }
 
         private bool CreateConfiguration()
@@ -385,7 +393,7 @@ namespace OrganicChemistry.Algorithm
             element.ConnectTo(MatrixUtil.TryGet(ref matrix, x, y - 1), 1);
         }
 
-        private bool CanConnect(Element element, int strength = 1)
+        private static bool CanConnect(Element element, int strength = 1)
         {
             return element.AvalableValency - strength >= 0;
         }

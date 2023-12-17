@@ -1,5 +1,5 @@
-﻿using System;
-using OrganicChemistry.Chemistry.Elements;
+﻿using OrganicChemistry.Chemistry.Elements;
+using System;
 
 namespace OrganicChemistry.Chemistry
 {

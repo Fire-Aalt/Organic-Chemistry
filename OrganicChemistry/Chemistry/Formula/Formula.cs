@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Media;
+﻿using Avalonia;
 using OrganicChemistry.Utility;
+using System.Collections.Generic;
 
 namespace OrganicChemistry.Chemistry
 {
     public class Formula
     {
-        public List<Text> Name = new();
-        public SizeF Size = new();
+        public List<Text> Name = [];
+        public Size Size = new();
 
         public string rawName;
         public Visual? visual;
