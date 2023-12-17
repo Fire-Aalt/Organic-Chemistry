@@ -30,7 +30,7 @@ namespace OrganicChemistry.Utility
         /// <param name="spacing"></param>
         /// <param name="drawDelay"></param>
         /// <returns></returns>
-        public async Task DrawMatrix(Point startingPoint, int spacing, int drawDelay, bool createGrid)
+        public async Task DrawMatrix(Point startingPoint, int spacing)
         {
             this.startingPoint = startingPoint;
             this.elementSpacing = spacing;
