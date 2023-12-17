@@ -21,6 +21,7 @@ namespace OrganicChemistry.Algorithm
 
         public int mainRowY, mainRowLength;
         public int x, y;
+        public int minY, maxY;
 
         public int orderedBranch;
         public Dictionary<int, Branch> availableBranches = [];
@@ -80,6 +81,8 @@ namespace OrganicChemistry.Algorithm
                 if (mainRowLength % 2 == 0)
                     orderedBranch--;
 
+                minY = mainRowY;
+                maxY = mainRowY;
                 bool success = CreateConfiguration();
                 if (success) return;
 
@@ -171,21 +174,21 @@ namespace OrganicChemistry.Algorithm
 
             if (availableCarbon > 0)
                 return false;
-
-            if (GenerateHalogens())
+            if (!GenerateHalogens())
             {
-                for (int x = 0; x < matrix.GetLength(0); x++)
-                {
-                    for (int y = 0; y < matrix.GetLength(1); y++)
-                    {
-                        matrix[x, y]?.GenerateFormula(new Avalonia.Visual());
-                    }
-                }
-
-                return true;
-            }
-            else
                 return false;
+            }
+
+            
+            for (int x = 0; x < matrix.GetLength(0); x++)
+            {
+                for (int y = 0; y < matrix.GetLength(1); y++)
+                {
+                    matrix[x, y]?.GenerateFormula(new Avalonia.Visual());
+                }
+            }
+
+            return true;
         }
 
         private int GenerateBranches(int availableCarbon)
@@ -358,6 +361,15 @@ namespace OrganicChemistry.Algorithm
                     int newOrderedBranch = mainRowLength - x;
                     if (newOrderedBranch > orderedBranch)
                         orderedBranch = newOrderedBranch;
+
+                    if (y < minY)
+                    {
+                        minY = y;
+                    }
+                    else if (y > maxY)
+                    {
+                        maxY = y;
+                    }
                 }
 
                 if (usedCarbon == carbon) break;

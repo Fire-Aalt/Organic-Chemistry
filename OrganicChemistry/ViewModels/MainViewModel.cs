@@ -39,9 +39,10 @@ public partial class MainViewModel : ViewModelBase
 
     private MatrixDrawer? _matrixDrawer;
 
-    private readonly Point _startingPoint = new(100, 50);
+    private readonly Point _startingPoint = new(100, 100);
 
     private int _mainRowY;
+    private int _minY;
 
     [ObservableProperty]
     private Canvas? _canvas;
@@ -71,6 +72,18 @@ public partial class MainViewModel : ViewModelBase
         var isomerAlgo = new IsomerAlgorithm(CarbonNumber, ChlorineNumber, BromNumber, IodineNumber, IsomerTypeSelectedItem);
         await isomerAlgo.Start();
 
+        var height = isomerAlgo.maxY - isomerAlgo.minY + 1;
+        if (isomerAlgo.matrix.GetLength(0) == 0)
+        {
+            Canvas.Width = 0;
+            Canvas.Height = 0;
+        }
+        else {
+            Canvas.Width = isomerAlgo.matrix.GetLength(0) * Spacing + _startingPoint.X * 2;
+            Canvas.Height = height * Spacing + _startingPoint.Y * 2;
+        }
+
+        _minY = isomerAlgo.minY;
         _mainRowY = isomerAlgo.mainRowY;
         await DrawMatrix(isomerAlgo.matrix);
     }
@@ -80,7 +93,7 @@ public partial class MainViewModel : ViewModelBase
     {
         _matrixDrawer = new MatrixDrawer(matrix, Canvas, _mainRowY);
 
-        await _matrixDrawer.DrawMatrix(_startingPoint, Spacing);
+        await _matrixDrawer.DrawMatrix(_startingPoint, Spacing, _minY);
     }
 
     private async Task ClearCanvas()

@@ -16,8 +16,8 @@ namespace OrganicChemistry.Utility
 
         public Point startingPoint;
         public int elementSpacing;
-        public int mainRow;
         public int mainRowY = mainRowY;
+        private int _minY;
 
         public CancellationTokenSource cts = new();
 
@@ -30,14 +30,15 @@ namespace OrganicChemistry.Utility
         /// <param name="spacing"></param>
         /// <param name="drawDelay"></param>
         /// <returns></returns>
-        public async Task DrawMatrix(Point startingPoint, int spacing)
+        public async Task DrawMatrix(Point startingPoint, int spacing, int minY, int minX = 0)
         {
             this.startingPoint = startingPoint;
             this.elementSpacing = spacing;
+            _minY = minY;
 
             for (int x = 0; x < matrix.GetLength(0); x++)
             {
-                for (int y = 0; y < matrix.GetLength(1); y++)
+                for (int y = minY; y < matrix.GetLength(1); y++)
                 {
                     if (matrix[x, y] == null) 
                         continue;
@@ -62,7 +63,7 @@ namespace OrganicChemistry.Utility
 
             Point formulaPoint = new(
                 startingPoint.X + x * elementSpacing,
-                startingPoint.Y + y * elementSpacing);
+                startingPoint.Y + (y - _minY) * elementSpacing);
 
             // Draw Element
             var formulaBlock = new ElementFormula { Element = element };
