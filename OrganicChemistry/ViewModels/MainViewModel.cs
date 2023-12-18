@@ -1,11 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OrganicChemistry.Algorithm;
 using OrganicChemistry.Chemistry.Elements;
 using OrganicChemistry.Utility;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -57,7 +57,8 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
 
-        await ClearCanvas();
+        ClearCanvas();
+
         await CreateMatrix();
     }
 
@@ -69,6 +70,8 @@ public partial class MainViewModel : ViewModelBase
     // Fill the matrix
     public async Task CreateMatrix()
     {
+        ArgumentNullException.ThrowIfNull(Canvas);
+
         var isomerAlgo = new IsomerAlgorithm(CarbonNumber, ChlorineNumber, BromNumber, IodineNumber, IsomerTypeSelectedItem);
         await isomerAlgo.Start();
 
@@ -91,12 +94,14 @@ public partial class MainViewModel : ViewModelBase
     // Draw the matrix
     private async Task DrawMatrix(Element[,] matrix)
     {
+        ArgumentNullException.ThrowIfNull(Canvas);
+
         _matrixDrawer = new MatrixDrawer(matrix, Canvas, _mainRowY);
 
         await _matrixDrawer.DrawMatrix(_startingPoint, Spacing, _minY);
     }
 
-    private async Task ClearCanvas()
+    private void ClearCanvas()
     {
         _matrixDrawer?.cts?.Cancel();
         Canvas?.Children.Clear();
