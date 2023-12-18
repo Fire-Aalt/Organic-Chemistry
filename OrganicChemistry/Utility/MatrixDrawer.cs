@@ -14,10 +14,10 @@ namespace OrganicChemistry.Utility
         public Element[,] matrix = matrix;
         public Canvas canvas = canvas;
 
-        public Point startingPoint;
+        public double padding;
         public int elementSpacing;
         public int mainRowY = mainRowY;
-        private int _minY;
+        private Point _min;
 
         public CancellationTokenSource cts = new();
 
@@ -26,19 +26,19 @@ namespace OrganicChemistry.Utility
         /// <summary>
         /// Draws matrix
         /// </summary>
-        /// <param name="startingPoint"></param>
+        /// <param name="padding"></param>
         /// <param name="spacing"></param>
         /// <param name="drawDelay"></param>
         /// <returns></returns>
-        public async Task DrawMatrix(Point startingPoint, int spacing, int minY, int minX = 0)
+        public async Task DrawMatrix(double padding, int spacing, Point min)
         {
-            this.startingPoint = startingPoint;
+            this.padding = padding;
             this.elementSpacing = spacing;
-            _minY = minY;
+            _min = min;
 
-            for (int x = 0; x < matrix.GetLength(0); x++)
+            for (int x = (int)_min.X; x < matrix.GetLength(0); x++)
             {
-                for (int y = minY; y < matrix.GetLength(1); y++)
+                for (int y = (int)_min.Y; y < matrix.GetLength(1); y++)
                 {
                     if (matrix[x, y] == null) 
                         continue;
@@ -62,8 +62,8 @@ namespace OrganicChemistry.Utility
             Element element = matrix[x, y];
 
             Point formulaPoint = new(
-                startingPoint.X + x * elementSpacing,
-                startingPoint.Y + (y - _minY) * elementSpacing);
+                padding + (x - _min.X) * elementSpacing,
+                padding + (y - _min.Y) * elementSpacing);
 
             // Draw Element
             var formulaBlock = new ElementFormula { Element = element };
